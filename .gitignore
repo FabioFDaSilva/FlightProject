@@ -45,19 +45,16 @@ artifacts/
 # ----------------------------
 
 # node_modules folder
-frontend/node_modules/
-**/node_modules/
+flight-client/node_modules/
 
 # build output
-frontend/build/
-frontend/dist/
+flight-client/build/
+flight-client/dist/
 
 # dotenv / env files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+flight-client/.env*
+.env*
+!.env.example
 
 # npm logs
 npm-debug.log*
@@ -69,22 +66,3 @@ yarn-error.log*
 # ----------------------------
 .DS_Store
 Thumbs.db
-
-# Node modules
-node_modules/
-
-# Build output
-build/
-dist/
-
-# dotenv environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
