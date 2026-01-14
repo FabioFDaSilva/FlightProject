@@ -1,0 +1,6 @@
+@XmlAPI_HostAddress = http://localhost:5027
+
+GET {{XmlAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
