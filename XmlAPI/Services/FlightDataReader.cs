@@ -15,7 +15,8 @@ namespace XmlAPI.Services
 
     public class FlightDataReader
     {
-        private const string filePath = "Data/flightdata_A.xml";
+        private static readonly string filePath =
+            Path.Combine(AppContext.BaseDirectory, "Data", "flightdata_A.xml");
 
         private readonly List<Flight> _flights;
 
