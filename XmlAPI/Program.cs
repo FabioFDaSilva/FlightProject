@@ -14,14 +14,12 @@ namespace XmlAPI
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(policy =>
-                     policy.WithOrigins("http://localhost:3000") // your React dev server
+                     policy.WithOrigins("http://localhost:3000")
                            .AllowAnyHeader()
                            .AllowAnyMethod());
             });
 
-            // Register controllers
             builder.Services.AddControllers();
-            // Register FlightDataReader so controller can inject it
             builder.Services.AddScoped<FlightDataReader>();
             builder.Services.AddScoped<FlightPrinter>();
 

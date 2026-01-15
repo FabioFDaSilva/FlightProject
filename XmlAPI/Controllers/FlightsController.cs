@@ -8,7 +8,8 @@ public class FlightsController : ControllerBase
 {
     private readonly FlightDataReader _reader;
 
-    var flights;
+    List<Flight> flights = new List<Flight>();
+
     public FlightsController(FlightDataReader reader)
     {
         _reader = reader;
@@ -25,32 +26,78 @@ public class FlightsController : ControllerBase
     }
 
     [HttpGet("search")]
-    public IActionResult SearchFlights(string? fromAirport = null, string? toAirport = null, string? fromDate = null, string? toDate = null, string? fromprice = null, string? toprice = null)
+    public IActionResult SearchFlights(string? fromAirport = null, string? toAirport = null, string? fromDate = null, string? toDate = null, string? fromPrice = null, string? toPrice = null, bool? withSegments = false)
     {
 
-        var parsedFromDate = DateTime.TryParse(fromDate, out DateTime tempFromDate) ? parsedFromDate = tempFromDate : null;
-        var parsedToDate = DateTime.TryParse(toDate, out DateTime tempToDate) ? parsedToDate = tempToDate : null;
+        DateTime? parsedFromDate = DateTime.TryParse(fromDate, out DateTime tempFromDate) ? parsedFromDate = tempFromDate : null;
+        DateTime? parsedToDate = DateTime.TryParse(toDate, out DateTime tempToDate) ? parsedToDate = tempToDate : null;
 
-        var parsedFromPrice = decimal.TryParse(fromprice, out decimal tempFromPrice) ? parsedFromPrice = tempFromPrice : null;
-        var parsedToPrice = decimal.TryParse(toprice, out decimal tempToPrice) ? parsedToPrice = tempToPrice : null;
+        decimal? parsedFromPrice = decimal.TryParse(fromPrice, out decimal tempFromPrice) ? parsedFromPrice = tempFromPrice : null;
+        decimal? parsedToPrice = decimal.TryParse(toPrice, out decimal tempToPrice) ? parsedToPrice = tempToPrice : null;
 
         if (flights == null || flights.Count == 0) {
             flights = _reader.LoadFlights();
         }
-
+        
+        Console.WriteLine($"Flights loaded for search: {flights.Count}");
         var filteredFlights = flights
-            .Where(f => string.IsNullOrEmpty(depAir) || f.DepAir.Equals(depAir, StringComparison.OrdinalIgnoreCase))
-            .Where(f => string.IsNullOrEmpty(destAir) || f.DestAir.Equals(destAir, StringComparison.OrdinalIgnoreCase))
-            .Where(f => !parsedFromDate.HasValue || 
-                        DateTime.TryParse(f.InDepartDate, out var fFrom) && fFrom >= parsedFromDate.Value)
-            .Where(f => !parsedToDate.HasValue || 
-                        DateTime.TryParse(f.OutDepartDate, out var fTo) && fTo <= parsedToDate.Value)
-            .Where(f => !parsedFromPrice.HasValue || 
-                        decimal.TryParse(f.OriginalPrice, out var pFrom) && pFrom >= parsedFromPrice.Value)
-            .Where(f => !parsedToPrice.HasValue || 
-                        decimal.TryParse(f.OriginalPrice, out var pTo) && pTo <= parsedToPrice.Value)
-            .ToList();
+            .Where(f =>
+            {
+                // Airport filters
+                bool matchesFrom = string.IsNullOrEmpty(fromAirport) || 
+                                   f.DepAir.Equals(fromAirport, StringComparison.OrdinalIgnoreCase);
+                bool matchesTo = string.IsNullOrEmpty(toAirport) || 
+                                 f.DestAir.Equals(toAirport, StringComparison.OrdinalIgnoreCase);
 
+                // Date filters
+                bool matchesFromDate = true;
+                if (parsedFromDate.HasValue)
+                {
+                    matchesFromDate = DateTime.TryParse(f.InDepartDate, out var fFrom) &&
+                                      fFrom >= parsedFromDate.Value;
+                }
+
+                bool matchesToDate = true;
+                if (parsedToDate.HasValue)
+                {
+                    matchesToDate = DateTime.TryParse(f.OutDepartDate, out var fTo) &&
+                                    fTo <= parsedToDate.Value;
+                }
+
+                if (matchesFrom == true && matchesTo == true && matchesToDate == false)
+                {
+                    Console.WriteLine(
+                        $"Flight {f.Id} matches airport criteria. matchesToDate={matchesToDate}, " +
+                        $"OutDepartDate='{f.OutDepartDate}', parsedToDate={parsedToDate?.ToString("yyyy-MM-dd")}"
+                    );
+                }
+                // Price filters
+                bool matchesFromPrice = true;
+                if (parsedFromPrice.HasValue)
+                {
+                    matchesFromPrice = decimal.TryParse(f.OriginalPrice, out var pFrom) &&
+                                       pFrom >= parsedFromPrice.Value;
+                }
+
+                bool matchesToPrice = true;
+                if (parsedToPrice.HasValue)
+                {
+                    matchesToPrice = decimal.TryParse(f.OriginalPrice, out var pTo) &&
+                                     pTo <= parsedToPrice.Value;
+                }
+
+                if (withSegments == true)
+                {
+                    f.Segments = _reader.GetSegmentsByFlightId(f.Id);
+                }
+                // Flight passes only if ALL conditions are true
+                return matchesFrom && matchesTo && matchesFromDate && matchesToDate &&
+                       matchesFromPrice && matchesToPrice;
+            })
+            .ToList();
+        
+        Console.WriteLine($"Filtered flights count: {filteredFlights.Count}");
+        
         return Ok(filteredFlights);
     }
 
@@ -94,6 +141,8 @@ public class FlightsController : ControllerBase
 
         if (mostFlightsDay == null)
             return NotFound("No flights found for the given criteria.");
+
+        return NotFound("Something went wrong");
     }
 
     [HttpGet("available-years")]

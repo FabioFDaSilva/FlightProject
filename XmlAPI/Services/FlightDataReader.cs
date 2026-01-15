@@ -17,6 +17,13 @@ namespace XmlAPI.Services
     {
         private const string filePath = "Data/flightdata_A.xml";
 
+        private readonly List<Flight> _flights;
+
+        public FlightDataReader()
+        {
+            _flights = LoadFlights();
+        }
+
         public List<Flight> LoadFlights()
         {
             var serializer = new XmlSerializer(typeof(FlightList));
@@ -26,6 +33,17 @@ namespace XmlAPI.Services
 
             Console.WriteLine($"Flights loaded: {result?.Flights.Count ?? 0}");
             return result?.Flights ?? new List<Flight>();
+        }
+
+        public List<Flight> GetAllFlights() => _flights;
+
+        public List<Segment> GetSegmentsByFlightId(string flightId)
+        {
+            if (string.IsNullOrWhiteSpace(flightId))
+                return new List<Segment>();
+
+            var flight = _flights.FirstOrDefault(f => f.Id == flightId);
+            return flight?.Segments ?? new List<Segment>();
         }
     }
 }
