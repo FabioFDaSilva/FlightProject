@@ -6,16 +6,6 @@ namespace XmlAPI.Tests;
 public class FlightDataReaderTests
 {
     [Fact]
-    public void LoadFlights_ReturnsFlights()
-    {
-        var reader = new FlightDataReader();
-
-        var flights = reader.LoadFlights();
-
-        Assert.NotEmpty(flights);
-    }
-
-    [Fact]
     public void LoadFlights_ShouldReturnFlightsList()
     {
         // Arrange
@@ -23,7 +13,8 @@ public class FlightDataReaderTests
         var flights = reader.LoadFlights();        // Assert
         Assert.NotNull(flights); // Should return a list
         Assert.True(flights.Count > 0); // Should contain at least one flight
-    }    [Fact]
+    }    
+    [Fact]
     public void GetSegmentsByFlightId_ShouldReturnSegments()
     {
         // Arrange
