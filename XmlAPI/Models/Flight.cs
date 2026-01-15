@@ -45,7 +45,7 @@ namespace XmlAPI.Models
         public string OutBookingClass { get; set; } = string.Empty;
         [XmlAttribute("outcarriercode")]
         public string OutCarrierCode { get; set; } = string.Empty;
-        [XmlAttribute("outdepartcode")]
+        [XmlAttribute("outdepartdate")]
         public string OutDepartDate { get; set; } = string.Empty;
         [XmlAttribute("outdeparttime")]
         public string OutDepartTime { get; set; } = string.Empty;
