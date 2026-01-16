@@ -209,6 +209,19 @@ namespace XmlAPI.Controllers
             return Ok(sortedYears);
         }
 
+
+        public class AirportCount
+        {
+            public string Name { get; set; } = string.Empty; // IATA code
+            public int Count { get; set; }
+        }
+
+
+        public class MostCommonAirportsResponse
+        {
+            public List<AirportCount> Airports { get; set; } = new List<AirportCount>();
+        }
+
         [HttpGet("most-common-airports")]
         public IActionResult MostCommonAirports() 
         {
@@ -234,10 +247,16 @@ namespace XmlAPI.Controllers
             var mostCommonAirports = airportCounts
                 .OrderByDescending(kv => kv.Value)
                 .Take(5)
-                .Select(kv => new { Airport = kv.Key, Count = kv.Value })
+                .Select(kv => new AirportCount{
+                    Name = kv.Key,
+                    Count = kv.Value
+                })
                 .ToList();
 
-            return Ok(mostCommonAirports);
+            return Ok(new MostCommonAirportsResponse
+            {
+                Airports = mostCommonAirports
+            });
         }
 
         [HttpGet("avg-price-per-carrier")]

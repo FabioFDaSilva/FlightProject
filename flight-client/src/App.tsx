@@ -6,7 +6,8 @@ import { searchFlights } from "./services/flightService";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./components/navbar/navbar";
 import SearchPage from "./pages/search/searchPage";
-import MostInyearPage from "./pages/stats/mostInYearPage";
+import MostInYearPage from "./pages/stats/mostInYearPage";
+import MostCommonAirpotPage from "./pages/stats/mostCommonAirpotPage";
 import AllFlights from "./pages/allFlights/allFlights";
 // import Stats from "../pages/stats/statspage";
 
@@ -19,7 +20,9 @@ function App() {
 
       <Routes>
         <Route path="/" element={<SearchPage />} />
-        <Route path="/mostInYear" element={<MostInyearPage />} />
+        <Route path="/mostInYear" element={<MostInYearPage />} />
+        <Route path="/mostCommon" element={<MostCommonAirpotPage />} />
+
         {/* <Route path="/stats" element={<StatsPage />} /> */}
       </Routes>
     </BrowserRouter>

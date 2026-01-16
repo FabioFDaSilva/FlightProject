@@ -1,4 +1,4 @@
-import { Flight } from "../types";
+import { AirportCount, Flight } from "../types";
 
 const API_BASE = "http://localhost:5027/api";
 
@@ -47,7 +47,6 @@ interface MostInYearResponse {
 
 export async function mostInYear(params: YearSearchParams): Promise<MostInYearResponse> {
 
-  console.log(params.targetYear);
   const res = await fetch(`${API_BASE}/flights/most-flights-day?targetYear=${params.targetYear}`);
   if (!res.ok) throw new Error("API request failed");
   return res.json();
@@ -59,11 +58,27 @@ export async function availableYears(): Promise<number[]> {
   const response = await fetch(`${API_BASE}/flights/available-years`);
   
   if (!response.ok) {
-    throw new Error("Failed to fetch flights");
+    throw new Error("Failed to fetch years");
   }
   
   return response.json();
 }
+
+
+
+export async function mostCommonAirport(): Promise<AirportCount> {
+  
+  console.log("Fetching Most Common Airports");
+  const response = await fetch(`${API_BASE}/flights/most-common-airports`);
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch airports");
+  }
+  
+  return response.json();
+}
+
+
 
 
 
