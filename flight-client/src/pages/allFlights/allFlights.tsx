@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Flight } from "../../types";
 import { fetchFlights } from "../../services/flightService";
+import Loader from "../../components/loader/loader";
 // import Stats from "../pages/stats/statspage";
 
 
@@ -18,7 +19,7 @@ export default function AllFlights() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading flights...</div>;
+  if (loading) return <Loader message="Loading flights..." />;
   if (error) return <div>Error: {error}</div>;
   
   return (
