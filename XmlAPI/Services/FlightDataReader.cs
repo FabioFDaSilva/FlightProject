@@ -13,8 +13,12 @@ namespace XmlAPI.Services
         public List<Flight> Flights { get; set; } = new();
     }
 
+    
+
     public class FlightDataReader
     {
+        private static List<Flight> _cachedFlights = new();
+        
         private static readonly string filePath =
             Path.Combine(AppContext.BaseDirectory, "Data", "flightdata_A.xml");
 
@@ -27,12 +31,20 @@ namespace XmlAPI.Services
 
         public List<Flight> LoadFlights()
         {
+
+            if (_cachedFlights.Count > 0)
+            {
+                Console.WriteLine($"Returning cached flights: {_cachedFlights.Count}");
+                return _cachedFlights;
+            }
             var serializer = new XmlSerializer(typeof(FlightList));
 
             using var stream = File.OpenRead(filePath);
             var result = (FlightList?)serializer.Deserialize(stream);
 
             Console.WriteLine($"Flights loaded: {result?.Flights.Count ?? 0}");
+
+            _cachedFlights = result?.Flights ?? new List<Flight>();
             return result?.Flights ?? new List<Flight>();
         }
 

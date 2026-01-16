@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav>
       <NavLink to="/">Search</NavLink>
       {" | "}
-      <NavLink to="/stats">Stats</NavLink>
+      <NavLink to="/mostInYear">Most Flights In Selected Year</NavLink>
     </nav>
   );
 }
