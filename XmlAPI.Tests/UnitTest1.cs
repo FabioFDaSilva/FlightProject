@@ -1,5 +1,10 @@
 ﻿using Xunit;
+using XmlAPI.Controllers;
+using XmlAPI.Models;
+using System.Collections.Generic;
+using System;
 using XmlAPI.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace XmlAPI.Tests;
 
@@ -27,3 +32,98 @@ public class FlightDataReaderTests
 
 
 }
+
+public class FlightControllerTests
+{
+    [Fact]
+    public void FilterFlights_ByAll_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader(); // or a mocked version
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+    [Fact]
+    public void FilterFlights_FromAirport_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader(); // or a mocked version
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights(fromAirport: "GLA"); //It's important this is a valid airport AND exists in the XML
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+    [Fact]
+    public void FilterFlights_ToAirport_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights(toAirport: "GLA"); //It's important this is a valid airport AND exists in the XML
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+    [Fact]
+    public void FilterFlights_FromDate_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights(fromDate: "2000-01-01");
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+    [Fact]
+    public void FilterFlights_ToDate_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights(toDate: "9999-01-01");
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+    [Fact]
+    public void FilterFlights_FromPrice_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.SearchFlights(fromPrice: "0");
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var flights = Assert.IsAssignableFrom<List<Flight>>(okResult.Value);
+        Assert.True(flights.Count > 0);
+    }
+
+}
+
