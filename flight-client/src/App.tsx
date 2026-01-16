@@ -5,6 +5,7 @@ import MostInYearPage from "./pages/stats/mostInYearPage";
 import MostCommonAirpotPage from "./pages/stats/mostCommonAirportPage";
 import AveragePricePerCarrier from "./pages/stats/averagePricePerCarrier";
 import AskAIPage from "./pages/askAI/askAIPage";
+import "./styles/global.css";
 
 function App() {
   return (
