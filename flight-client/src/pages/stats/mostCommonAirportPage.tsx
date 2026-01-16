@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { mostCommonAirport } from "../../services/flightService";
 import type { AirportCount } from "../../types";
-
-
+import MostCommonAirportCard from "./mostCommonAirportCard";
 
 export default function MostCommonAirpotPage() {
 const [mostCommonAirports, setMostCommonAirports] = useState<AirportCount | null>(null);
@@ -11,7 +10,7 @@ const [mostCommonAirports, setMostCommonAirports] = useState<AirportCount | null
   // Fetch available years on mount
   useEffect(() => {
 
-    async function fetchYears() {
+    async function fetchCommonAirports() {
       try {
             const data = await mostCommonAirport();
             setMostCommonAirports(data);
@@ -21,25 +20,26 @@ const [mostCommonAirports, setMostCommonAirports] = useState<AirportCount | null
           }
     }
 
-    fetchYears();
+    fetchCommonAirports();
   }, []);
 
 
   return (
     <div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-    
+
         {!error && !mostCommonAirports && <p>Loading airports...</p>}
-    
-        {mostCommonAirports && (
-          <ul>
-            {mostCommonAirports.airports.map((airport) => (
-              <li key={airport.name}>
-                {airport.name}: {airport.count} flights
-              </li>
-            ))}
-          </ul>
-        )}
+
+        <div>
+        	{mostCommonAirports?.airports.map((airport, index) => (
+        		<MostCommonAirportCard
+        			key={airport.name}
+        			position={index}
+        			name={airport.name}
+        			count={airport.count}
+        		/>
+        	))}
+        </div>
     </div>
   );
 }

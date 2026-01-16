@@ -1,0 +1,31 @@
+.container {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	max-width: 200px;
+	margin: 0 auto 1rem auto;
+}
+
+.label {
+	color: black;
+	font-weight: 500;
+	font-size: 0.9rem;
+}
+
+.select {
+	width: 100%;
+	padding: 0.4rem 0.8rem;
+	border-radius: 999px;
+	border: none;
+	background-color: #0f172a;
+	color: #e5e7eb;
+	font-size: 0.9rem;
+	appearance: none;
+	text-align: center;
+	cursor: pointer;
+}
+
+.select option {
+	background-color: #0f172a;
+	color: #e5e7eb;
+}

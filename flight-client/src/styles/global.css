@@ -1,0 +1,24 @@
+/* src/styles/global.css */
+
+:root {
+    --bg-color: #0f172a;
+    --text-color: #e5e7eb;
+    --primary-color: #2563eb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #aba9a9;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}

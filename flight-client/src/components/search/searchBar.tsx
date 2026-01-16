@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import styles from "../../pages/search/searchBar.module.css";
 
 type SearchParams = {
   fromAirport?: string;
@@ -36,38 +37,49 @@ const [toPrice, setToPrice] = useState("");
         
     };  
     return (
-      <form onSubmit={handleSubmit}>
-        <input
-          placeholder="From airport"
-          value={fromAirport}
-          onChange={(e) => setFromAirport(e.target.value)}
-        />  
-        <input
-          placeholder="To airport"
-          value={toAirport}
-          onChange={(e) => setToAirport(e.target.value)}
-        />  
-        <input
-          type="date"
-          value={fromDate}
-          onChange={(e) => setFromDate(e.target.value)}
-        />  
-        <input
-          type="date"
-          value={toDate}
-          onChange={(e) => setToDate(e.target.value)}
-        />  
-        <input
-          type="minprice"
-          value={fromPrice}
-          onChange={(e) => setFromPrice(e.target.value)}
-        /> 
-        <input
-          type="maxprice"
-          value={toPrice}
-          onChange={(e) => setToPrice(e.target.value)}
-        /> 
-        <button type="submit">Search</button>
+      <form className={styles.form} onSubmit={handleSubmit}>
+        <div className={styles.row}>
+          <input
+            placeholder="From airport (IATA code)"
+            value={fromAirport}
+            onChange={(e) => setFromAirport(e.target.value)}
+          />
+          <input
+            placeholder="To airport (IATA code)"
+            value={toAirport}
+            onChange={(e) => setToAirport(e.target.value)}
+          />
+        </div>
+    
+        <div className={styles.row}>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+          />
+          <input
+            type="date"
+            value={toDate}
+            onChange={(e) => setToDate(e.target.value)}
+          />
+        </div>
+    
+        <div className={styles.row}>
+          <input
+            placeholder="Min price (£)"
+            value={fromPrice}
+            onChange={(e) => setFromPrice(e.target.value)}
+          />
+          <input
+            placeholder="Max price (£)"
+            value={toPrice}
+            onChange={(e) => setToPrice(e.target.value)}
+          />
+        </div>
+    
+        <button className={styles.submit} type="submit">
+          Search
+        </button>
       </form>
     );
 }

@@ -162,5 +162,31 @@ public class FlightControllerTests
         Assert.True(years.Count > 0);
     }
 
+    [Fact]
+    public void MostCommonAirports_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.MostCommonAirports();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+
+        dynamic response = okResult.Value;
+
+        var airports = response.Airports as IEnumerable<dynamic>;
+        Assert.NotNull(airports);
+        Assert.NotEmpty(airports);
+
+        // Optional: check the top airport
+        foreach (var airport in response.Airports)
+        {
+            Assert.False(string.IsNullOrWhiteSpace((string)airport.Name));
+            Assert.True((int)airport.Count >= 0);
+        }
+    }
+
 }
 

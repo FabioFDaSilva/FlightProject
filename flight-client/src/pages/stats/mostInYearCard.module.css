@@ -1,0 +1,24 @@
+.card {
+	background-color: #020617;
+	border-radius: 1rem;
+	padding: 1rem;
+	max-width: 300px;
+	margin: 1rem auto;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+}
+
+.date {
+	font-size: 1rem;
+	font-weight: 600;
+	margin-bottom: 0.25rem;
+}
+
+.count {
+	font-size: 0.85rem;
+	color: #94a3b8; /* muted text for number of flights */
+}

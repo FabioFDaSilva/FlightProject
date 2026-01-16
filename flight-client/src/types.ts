@@ -52,3 +52,9 @@ export interface Segment {
       count: number;  // number of flights
     }[];
   }
+
+  export interface CarrierAveragePrice {
+    carrier: string; // Carrier code
+    averagePrice: number; // Average price for the carrier
+    flightCount: number; // Number of flights for the carrier
+  }

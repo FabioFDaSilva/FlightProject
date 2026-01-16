@@ -1,7 +1,8 @@
 import { useState } from "react";
-import SearchBar from "../../components/stats/mostInYearBar";
+import MostInYearBar from "../../components/stats/mostInYearBar";
 import { mostInYear } from "../../services/flightService";
-import type { Flight } from "../../types";
+
+import MostInYearCard from "./mostInYearCard";
 
 export default function MostInYear() {
   const [mostCommonDates, setmostCommonDates] = useState<globalThis.Date[]>([]);
@@ -29,19 +30,17 @@ export default function MostInYear() {
     } catch {
       setError("Failed to load flights");
     }
-  };
+  };  
 
   return (
     <>
-      <SearchBar onSearch={handleSearch} />
-      {error && <p>{error}</p>}
-      <ul>
-        {mostCommonDates.map((date, index) => (
-          <li key={index}>
-            {date.toDateString()} — {totalcount} flights
-          </li>
-        ))}
-      </ul>
-    </>
+		  <MostInYearBar onSearch={handleSearch} />
+		  {error && <p>{error}</p>}
+		  <div>
+		  	{mostCommonDates.map((item, index) => (
+		  		<MostInYearCard key={index} date={item} count={totalcount} />
+		  	))}
+		  </div>
+	  </>
   );
 }
