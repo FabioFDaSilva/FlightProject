@@ -4,6 +4,7 @@ import SearchPage from "./pages/search/searchPage";
 import MostInYearPage from "./pages/stats/mostInYearPage";
 import MostCommonAirpotPage from "./pages/stats/mostCommonAirportPage";
 import AveragePricePerCarrier from "./pages/stats/averagePricePerCarrier";
+import AskAIPage from "./pages/askAI/askAIPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/mostInYear" element={<MostInYearPage />} />
         <Route path="/mostCommon" element={<MostCommonAirpotPage />} />
         <Route path="/avgCarrierPrice" element={<AveragePricePerCarrier />} />
+        <Route path="/askAI" element={<AskAIPage />} />
       </Routes>
     </BrowserRouter>
   );

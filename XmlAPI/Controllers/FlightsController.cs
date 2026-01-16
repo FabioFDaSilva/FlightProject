@@ -4,6 +4,12 @@ using XmlAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+
+using OpenAI;
+using OpenAI.Chat;
+using OpenAI.Models;
+using System.Text.Json;
 
 
 namespace XmlAPI.Controllers
@@ -290,6 +296,117 @@ namespace XmlAPI.Controllers
                 .ToList();
 
             return Ok(avgPrices);
+        }
+
+        [HttpPost("ask-ai")]
+        public async Task<IActionResult> AskAI([FromBody] AIQueryRequest request)
+        {
+            
+            try 
+            {
+                if (string.IsNullOrWhiteSpace(request.Query))
+                    return BadRequest("Query cannot be empty.");
+
+
+                Console.WriteLine($"Received AI query: {request.Query}");
+                var flightsData = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
+                var context = GenerateStructuredText(flightsData);
+
+                Console.WriteLine("Generated context for AI: context length = " + context.Length);
+                var answer = await CallOpenAIAsync(request.Query, context);
+
+                return Ok(new { Answer = answer });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.ToString());
+            }
+        }
+
+        public class AIQueryRequest
+        {
+        	public string Query { get; set; } = string.Empty;
+        }
+
+        private string GenerateStructuredText(List<Flight> flights)
+        {
+            var compactFlights = flights.Select(f => new object[] {
+               f.Carrier,
+               f.DepAir,
+               f.DestAir,
+               f.OutDepartDate.Substring(0,10),
+               Math.Round(decimal.Parse(f.OriginalPrice),2)
+            }).ToList();
+
+            var options = new JsonSerializerOptions { WriteIndented = false };
+            var compactJson = JsonSerializer.Serialize(compactFlights, options);
+        	return compactJson;
+        }
+
+        private async Task<string> CallOpenAIAsync(string question, string context)
+        {
+
+            Console.WriteLine("Calling OpenAI API...");
+        	var apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        	if (string.IsNullOrEmpty(apiKey))
+        		throw new Exception("OPENAI_API_KEY not set");
+
+            Console.WriteLine("Using OpenAI API Key: (secret)");
+            
+        	using var client = new HttpClient();
+        	client.DefaultRequestHeaders.Authorization =
+        		new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+            
+            Console.WriteLine("Preparing payload for OpenAI API...");
+            string prompt = "You answer questions about flight data, The flight data is provided as an array of arrays. " +
+                            "Each array represents one flight, with the following fields in order: " +
+                            "0: Carrier (airline code), " +
+                            "1: Departure airport IATA code, " +
+                            "2: Destination airport IATA code, " +
+                            "3: Outbound departure date (YYYY-MM-DD), " +
+                            "4: Price in GBP (decimal). ";
+
+            Console.WriteLine($"context = {context}");
+
+        	var payload = new
+        	{
+        		model = "gpt-3.5-turbo",
+        		messages = new[]
+        		{
+        			new { role = "system", content = prompt},
+        			new { role = "user", content = context },
+        			new { role = "user", content = question }
+        		},
+        		max_tokens = 200
+        	};
+
+            Console.WriteLine("Sending request to OpenAI API...");
+        	var response = await client.PostAsJsonAsync(
+        		"https://api.openai.com/v1/chat/completions",
+        		payload
+        	);
+
+            Console.WriteLine("OpenAI API response received.");
+        	var errorBody = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+            	Console.WriteLine("OPENAI ERROR:");
+            	Console.WriteLine(errorBody);
+
+            	return $"OpenAI error: {errorBody}";
+            }
+
+        	var json = await response.Content.ReadAsStringAsync();
+        	using var doc = System.Text.Json.JsonDocument.Parse(json);
+
+            Console.WriteLine("Parsed OpenAI response JSON.");
+        	return doc.RootElement
+        		.GetProperty("choices")[0]
+        		.GetProperty("message")
+        		.GetProperty("content")
+        		.GetString()!;
         }
 
     }

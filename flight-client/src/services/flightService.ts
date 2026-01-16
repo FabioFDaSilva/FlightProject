@@ -90,6 +90,23 @@ export async function averagePricePerCarrier(): Promise<CarrierAveragePrice[]> {
   return response.json();
 }
 
+export async function askAI(query: string): Promise<{ answer: string }> {
+  
+  console.log("Asking AI: " + query);
+  const response = await fetch(`${API_BASE}/flights/ask-ai`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get AI answer");
+  }
+
+  return response.json();
+
+}
+
 
 
 
