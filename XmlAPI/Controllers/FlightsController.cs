@@ -282,8 +282,10 @@ namespace XmlAPI.Controllers
                 .Select(kv => new 
                 { 
                     Carrier = kv.Key, 
-                    AveragePrice = kv.Value.Average() 
+                    AveragePrice = kv.Value.Average(),
+                    FlightCount = kv.Value.Count
                 })
+                .Where(x => x.FlightCount > 1)
                 .OrderBy(x => x.Carrier)
                 .ToList();
 

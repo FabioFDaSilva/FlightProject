@@ -1,0 +1,39 @@
+.card {
+	background-color: #020617;
+	border-radius: 1rem;
+	padding: 1rem;
+	max-width: 280px; /* compact width */
+	margin: 0.5rem auto;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+	color: white;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	transition: transform 0.1s ease;
+}
+
+.card:hover {
+	transform: translateY(-2px);
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 600;
+}
+
+.icon {
+	font-size: 1.4rem;
+}
+
+.name {
+	font-size: 1rem;
+}
+
+.price {
+	font-size: 0.85rem;
+	color: #94a3b8;
+	margin-top: 0.25rem;
+}

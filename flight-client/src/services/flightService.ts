@@ -1,4 +1,4 @@
-import { AirportCount, Flight } from "../types";
+import { AirportCount, Flight, CarrierAveragePrice } from "../types";
 
 const API_BASE = "http://localhost:5027/api";
 
@@ -73,6 +73,18 @@ export async function mostCommonAirport(): Promise<AirportCount> {
   
   if (!response.ok) {
     throw new Error("Failed to fetch airports");
+  }
+  
+  return response.json();
+}
+
+export async function averagePricePerCarrier(): Promise<CarrierAveragePrice[]> {
+  
+  console.log("Fetching Average Prices");
+  const response = await fetch(`${API_BASE}/flights/avg-price-per-carrier`);
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch carriers");
   }
   
   return response.json();

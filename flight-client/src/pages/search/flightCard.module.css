@@ -1,0 +1,56 @@
+.card {
+	background-color: #16245f;
+	border-radius: 1rem;
+	padding: 1rem;
+	margin-bottom: 1.25rem;
+    color: white;
+}
+
+.summary {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.meta {
+	display: flex;
+	gap: 1rem;
+	font-size: 0.85rem;
+	color: #94a3b8;
+}
+
+.price {
+	margin-left: auto;
+	font-weight: 600;
+	color: #e5e7eb;
+}
+
+.toggle {
+	align-self: flex-start;
+	padding: 0.4rem 0.9rem;
+	border-radius: 999px;
+	border: none;
+	background-color: #1e293b;
+	color: #e5e7eb;
+	cursor: pointer;
+}
+
+.toggle:hover {
+	background-color: #334155;
+}
+
+.segments {
+	margin-top: 0.75rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid #1e293b;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.segment {
+	background-color: #0f172a;
+	padding: 0.6rem;
+	border-radius: 0.75rem;
+	font-size: 0.8rem;
+}

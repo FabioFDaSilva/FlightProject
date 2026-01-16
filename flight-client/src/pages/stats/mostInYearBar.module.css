@@ -1,0 +1,63 @@
+.form {
+	max-width: 300px; /* smaller width */
+	margin: 2rem auto;
+	padding: 1rem; /* slightly smaller padding */
+	background-color: #020617;
+	border-radius: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.row {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+label {
+	color: #e5e7eb;
+	font-weight: 500;
+	text-align: center; /* center label text */
+}
+
+.select {
+	padding: 0.4rem 0.75rem; /* smaller padding */
+	border-radius: 999px;
+	border: none;
+	background-color: #0f172a;
+	color: #e5e7eb;
+	font-size: 0.85rem;
+	text-align: center; /* center the selected text */
+	appearance: none;
+}
+
+.select option {
+	background-color: #0f172a;
+	color: #e5e7eb;
+	text-align: center; /* center options text */
+}
+
+.select:focus {
+	outline: none;
+	background-color: #1e293b;
+}
+
+.submit {
+	align-self: center;
+	padding: 0.5rem 1.5rem; /* smaller button */
+	border-radius: 999px;
+	border: none;
+	background-color: #2563eb;
+	color: white;
+	font-weight: 600;
+	cursor: pointer;
+	font-size: 0.9rem;
+	transition: transform 0.1s ease, background-color 0.2s ease;
+	text-align: center; /* ensure text centered */
+}
+
+.submit:hover {
+	background-color: #1d4ed8;
+	transform: translateY(-1px);
+}
