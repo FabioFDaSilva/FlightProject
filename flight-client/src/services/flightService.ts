@@ -34,3 +34,36 @@ export async function searchFlights(params: SearchParams): Promise<Flight[]> {
     
     return response.json();
 }
+
+
+type YearSearchParams = {
+  targetYear: string;
+};
+
+interface MostInYearResponse {
+  dates: string[];
+  maxCount: number;
+}
+
+export async function mostInYear(params: YearSearchParams): Promise<MostInYearResponse> {
+
+  console.log(params.targetYear);
+  const res = await fetch(`${API_BASE}/flights/most-flights-day?targetYear=${params.targetYear}`);
+  if (!res.ok) throw new Error("API request failed");
+  return res.json();
+}
+
+export async function availableYears(): Promise<number[]> {
+  
+  console.log("Fetching available years");
+  const response = await fetch(`${API_BASE}/flights/available-years`);
+  
+  if (!response.ok) {
+    throw new Error("Failed to fetch flights");
+  }
+  
+  return response.json();
+}
+
+
+

@@ -14,19 +14,33 @@ namespace XmlAPI.Controllers
     {
         private readonly FlightDataReader _reader;
 
-        List<Flight> flights = new List<Flight>();
+
+        // Caching
+        private static List<Flight> cachedFlights = new List<Flight>();
+        private static List<int> cachedAvailableYears = new List<int>();
+        
+        private List<Flight> flights = new List<Flight>();
 
         public FlightsController(FlightDataReader reader)
         {
             _reader = reader;
         }
 
-        [HttpGet]
+
+        private List<Flight> CacheFlights () 
+        {
+            flights = _reader.LoadFlights();
+            cachedFlights = flights;
+
+            return flights;
+        }
+
+        [HttpGet("getAll")]
         public IActionResult GetFlights()
         {
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
+
+            flights = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
+
             return Ok(flights);
 
         }
@@ -41,11 +55,9 @@ namespace XmlAPI.Controllers
             decimal? parsedFromPrice = decimal.TryParse(fromPrice, out decimal tempFromPrice) ? parsedFromPrice = tempFromPrice : null;
             decimal? parsedToPrice = decimal.TryParse(toPrice, out decimal tempToPrice) ? parsedToPrice = tempToPrice : null;
 
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
+            flights = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
 
-            Console.WriteLine($"Flights loaded for search: {flights.Count}");
+
             var filteredFlights = flights
                 .Where(f =>
                 {
@@ -104,57 +116,66 @@ namespace XmlAPI.Controllers
         }
 
         [HttpGet("most-flights-day")]
-        public IActionResult MostFlightsInYear(string? yearStr = null)
+        public IActionResult MostFlightsInYear(string targetYear)
         {
-            int? year = null;
-            if (!string.IsNullOrEmpty(yearStr) && int.TryParse(yearStr, out int parsedYear))
-            {
-                year = parsedYear;
-            }
-
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
-
+            Console.WriteLine($"Received targetYear: {targetYear}");
+        
+            if (string.IsNullOrEmpty(targetYear) || !int.TryParse(targetYear, out int year))
+                return BadRequest("Invalid or missing year parameter.");
+        
+            // Use cached flights if available
+            if (cachedFlights.Count > 0)
+                flights = cachedFlights;
+            else
+                CacheFlights();
+        
+            // Collect all departure dates
             var allDepartureDates = flights
-            .SelectMany(f =>
-            {
-                var dates = new List<DateTime>();
-
-                if (DateTime.TryParse(f.InDepartDate, out var inDate))
-                    dates.Add(inDate);
-
-                if (DateTime.TryParse(f.OutDepartDate, out var outDate))
-                    dates.Add(outDate);
-
-                return dates;
-            });
-
-            // Optionally filter by year
-            if (year.HasValue)
-                allDepartureDates = allDepartureDates.Where(d => d.Year == year.Value);
-
-            // Group by full date and count
-            var mostFlightsDay = allDepartureDates
-                .GroupBy(d => d.Date) // group by date only, ignore time
+                .SelectMany(f =>
+                {
+                    var dates = new List<DateTime>();
+                    if (DateTime.TryParse(f.InDepartDate, out var inDate)) dates.Add(inDate);
+                    if (DateTime.TryParse(f.OutDepartDate, out var outDate)) dates.Add(outDate);
+                    return dates;
+                })
+                .Where(d => d.Year == year); // filter by requested year
+        
+            if (!allDepartureDates.Any())
+                return NotFound("No flights found for the given year.");
+        
+            // Group by date and count flights
+            var groupedDates = allDepartureDates
+                .GroupBy(d => d.Date)                // group by date only
                 .Select(g => new { Date = g.Key, Count = g.Count() })
-                .OrderByDescending(x => x.Count)
-                .FirstOrDefault();
+                .ToList();                           // evaluate once
+            
+            var maxCount = groupedDates.Max(g => g.Count);  // find the maximum count
+            
+            var mostFlightsDays = groupedDates
+                .Where(g => g.Count == maxCount)    // get all dates with the max count
+                .Select(g => g.Date)                // just return the date
+                .ToArray();            
 
-            if (mostFlightsDay == null)
-                return NotFound("No flights found for the given criteria.");
-
-            return NotFound("Something went wrong");
+            Console.WriteLine($"Most flights days in {year}: {string.Join(", ", mostFlightsDays.Select(d => d.ToString("yyyy-MM-dd")))} with {maxCount} flights.");
+            return Ok(new { Dates = mostFlightsDays, MaxCount = maxCount });
         }
 
         [HttpGet("available-years")]
         public IActionResult GetYearsAvailable() 
         {
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
+            flights = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
+
 
             var years = new HashSet<int>();
+
+            Console.WriteLine($"avaibleYears count: {cachedAvailableYears.Count}");
+            if (cachedAvailableYears.Count > 0)
+            {
+                Console.WriteLine($"Returning cached available years: {string.Join(", ", cachedAvailableYears)}");
+
+                return Ok(cachedAvailableYears);
+            }
+
 
             foreach (var flight in flights)
             {
@@ -169,16 +190,18 @@ namespace XmlAPI.Controllers
                 }
             }
 
+            Console.WriteLine($"Available years: {string.Join(", ", years)}");
             var sortedYears = years.OrderBy(y => y).ToList();
+
+            //Lets cache this result
+            cachedAvailableYears = sortedYears;
             return Ok(sortedYears);
         }
 
         [HttpGet("most-common-airports")]
         public IActionResult MostCommonAirports() 
         {
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
+            flights = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
 
             var airportCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
@@ -209,9 +232,7 @@ namespace XmlAPI.Controllers
         [HttpGet("avg-price-per-carrier")]
         public IActionResult AveragePricePerCarrier()
         {
-            if (flights == null || flights.Count == 0) {
-                flights = _reader.LoadFlights();
-            }
+            flights = cachedFlights.Count > 0 ? cachedFlights : CacheFlights();
 
             var carrierPrices = new Dictionary<string, List<decimal>>(StringComparer.OrdinalIgnoreCase);
 
