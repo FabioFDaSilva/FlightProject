@@ -9,6 +9,7 @@ export default function Navbar() {
         <NavLink to="/mostInYear">Most Flights In Selected Year</NavLink>
         <NavLink to="/mostCommon">Most Common Airports</NavLink>
         <NavLink to="/avgCarrierPrice">Average Price Per Carrier</NavLink>
+        <NavLink to="/askAI">Ask AI</NavLink>
       </div>
     </nav>
   );

@@ -1,0 +1,54 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 2rem;
+}
+
+h2 {
+	color: black;
+	margin-bottom: 1rem;
+}
+
+.inputGroup {
+	display: flex;
+	gap: 0.5rem;
+	margin-bottom: 1rem;
+	width: 100%;
+	max-width: 600px;
+}
+
+.inputGroup input {
+	flex: 1;
+	padding: 0.5rem 1rem;
+	border-radius: 999px;
+	border: none;
+	background-color: #0f172a;
+	color: #e5e7eb;
+	font-size: 0.95rem;
+}
+
+.inputGroup input::placeholder {
+	color: #94a3b8;
+}
+
+.inputGroup button {
+	padding: 0.5rem 1rem;
+	border-radius: 999px;
+	border: none;
+	background-color: #6366f1;
+	color: white;
+	cursor: pointer;
+	font-weight: 600;
+	transition: transform 0.1s ease;
+}
+
+.inputGroup button:hover {
+	transform: translateY(-2px);
+}
+
+.error {
+	color: #f87171;
+	font-weight: 500;
+	margin-top: 1rem;
+}
