@@ -6,6 +6,8 @@ export default function Navbar() {
       <NavLink to="/">Search</NavLink>
       {" | "}
       <NavLink to="/mostInYear">Most Flights In Selected Year</NavLink>
+      {" | "}
+      <NavLink to="/mostCommon">Most Common Airports</NavLink>
     </nav>
   );
 }

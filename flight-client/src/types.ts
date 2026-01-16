@@ -45,3 +45,10 @@ export interface Segment {
     reservation: string;
     segments: Segment[];
   }
+
+  export interface AirportCount {
+    airports: {
+      name: string;   // IATA code
+      count: number;  // number of flights
+    }[];
+  }
