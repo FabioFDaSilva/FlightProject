@@ -125,5 +125,42 @@ public class FlightControllerTests
         Assert.True(flights.Count > 0);
     }
 
+    [Fact]
+    public void MostFlightsInYear_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.MostFlightsInYear("2018"); //Change this to a date you know exists in the XML
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        // Use dynamic to access properties
+        dynamic data = okResult.Value;
+        
+        DateTime[] dates = data.Dates;
+        int count = data.MaxCount;
+        
+        Assert.NotNull(dates);
+        Assert.True(dates.Length > 0);
+        Assert.True(count > 0);
+    }
+
+    [Fact]
+    public void AvailableYears_Works()
+    {
+        // Arrange
+        var reader = new FlightDataReader();
+        var controller = new FlightsController(reader);
+        // Act
+        var result = controller.GetYearsAvailable();
+
+        // Assert
+        var okResult = Assert.IsType<OkObjectResult>(result);
+        var years = Assert.IsAssignableFrom<List<int>>(okResult.Value);
+        Assert.True(years.Count > 0);
+    }
+
 }
 

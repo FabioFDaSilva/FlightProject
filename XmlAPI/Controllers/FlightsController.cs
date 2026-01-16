@@ -115,9 +115,16 @@ namespace XmlAPI.Controllers
             return Ok(filteredFlights);
         }
 
+
+        public class MostFlightsResult
+        {
+            public DateTime[] Dates { get; set; } = Array.Empty<DateTime>();
+            public int MaxCount { get; set; }
+        }
         [HttpGet("most-flights-day")]
         public IActionResult MostFlightsInYear(string targetYear)
         {
+            
             Console.WriteLine($"Received targetYear: {targetYear}");
         
             if (string.IsNullOrEmpty(targetYear) || !int.TryParse(targetYear, out int year))
@@ -157,7 +164,11 @@ namespace XmlAPI.Controllers
                 .ToArray();            
 
             Console.WriteLine($"Most flights days in {year}: {string.Join(", ", mostFlightsDays.Select(d => d.ToString("yyyy-MM-dd")))} with {maxCount} flights.");
-            return Ok(new { Dates = mostFlightsDays, MaxCount = maxCount });
+            return Ok(new MostFlightsResult
+            {
+                Dates = mostFlightsDays,
+                MaxCount = maxCount
+            });
         }
 
         [HttpGet("available-years")]
