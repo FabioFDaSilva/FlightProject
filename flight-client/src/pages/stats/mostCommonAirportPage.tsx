@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { mostCommonAirport } from "../../services/flightService";
 import type { AirportCount } from "../../types";
 import MostCommonAirportCard from "./mostCommonAirportCard";
+import Loader from "../../components/loader/loader";
 
 export default function MostCommonAirpotPage() {
 const [mostCommonAirports, setMostCommonAirports] = useState<AirportCount | null>(null);
@@ -28,7 +29,7 @@ const [mostCommonAirports, setMostCommonAirports] = useState<AirportCount | null
     <div>
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {!error && !mostCommonAirports && <p>Loading airports...</p>}
+        {!error && !mostCommonAirports && <Loader message="Loading Airports..." />}
 
         <div>
         	{mostCommonAirports?.airports.map((airport, index) => (

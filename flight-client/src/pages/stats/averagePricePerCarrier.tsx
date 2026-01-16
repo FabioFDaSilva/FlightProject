@@ -4,25 +4,21 @@ import type { CarrierAveragePrice } from "../../types";
 import styles from "./averagePricePerCarrier.module.css";
 import CarrierPriceCard from "./carrierPriceCard";
 import SortBy from "../../components/stats/sortBy";
+import Loader from "../../components/loader/loader";
 
 
 export default function AveragePricePerCarrier() {
     const [carriers, setCarriers] = useState<CarrierAveragePrice[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+
     const [sortOption, setSortOption] = useState("Price"); // default sort
 
     useEffect(() => {
-
-      async function fetchCarriers() {
-        try {
-              setCarriers(await averagePricePerCarrier())
-              setError(null);
-            } catch {
-              setError("Failed to load Carriers");
-            }
-      }
-
-      fetchCarriers();
+        averagePricePerCarrier()
+            .then(data => setCarriers(data))
+            .catch(err => setError(err.message))
+            .finally(() => setLoading(false));
     }, []);
 
 
@@ -35,16 +31,14 @@ export default function AveragePricePerCarrier() {
 
     return (
       <div>
-            {error && <p style={{ color: "red" }}>{error}</p>}  
-            {!error && !carriers.length && <p>Loading carriers...</p>} 
-            
             <SortBy
 				options={["Name", "Price"]}
 				defaultValue="Price"
 				onChange={(selected) => setSortOption(selected)}
                 label="Sort by:"
-			/>
-
+                />
+            {error && <p style={{ color: "red" }}>{error}</p>}  
+            {!error && !carriers.length && <Loader message="Loading Carriers..." />} 
             {sortedCarriers?.map((c, index) => (
 	            <CarrierPriceCard
 	            	key={c.carrier}
